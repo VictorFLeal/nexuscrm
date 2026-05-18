@@ -29,21 +29,31 @@ export default function RegisterPage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const res = await authService.register({
-        name: data.name,
-        email: data.email,
-        company: data.company,
-        password: data.password,
-      })
-      const { user, accessToken, refreshToken } = res.data.data
-      setAuth(user, accessToken, refreshToken)
-      toast.success('Conta criada com sucesso!')
-      navigate('/app/dashboard')
-    } catch (err: any) {
-      toast.error(err.response?.data?.error ?? 'Erro ao criar conta')
-    }
+  try {
+    const res = await authService.register({
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      password: data.password,
+    })
+
+    const { user, accessToken, refreshToken } = res.data.data
+
+    setAuth(user, accessToken, refreshToken)
+
+    toast.success('Conta criada com sucesso!')
+
+    navigate('/app/dashboard')
+
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      'Erro ao criar conta'
+
+    toast.error(message)
   }
+}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-white flex items-center justify-center p-6">

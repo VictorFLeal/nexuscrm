@@ -23,16 +23,26 @@ export default function LoginPage() {
   })
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const res = await authService.login(data.email, data.password)
-      const { user, accessToken, refreshToken } = res.data.data
-      setAuth(user, accessToken, refreshToken)
-      toast.success(`Bem-vindo de volta, ${user.name.split(' ')[0]}!`)
-      navigate('/app/dashboard')
-    } catch (err: any) {
-      toast.error(err.response?.data?.error ?? 'Erro ao fazer login')
-    }
+  try {
+    const res = await authService.login(data.email, data.password)
+
+    const { user, accessToken, refreshToken } = res.data.data
+
+    setAuth(user, accessToken, refreshToken)
+
+    toast.success(`Bem-vindo de volta, ${user.name.split(' ')[0]}!`)
+
+    navigate('/app/dashboard')
+
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      'Erro ao fazer login'
+
+    toast.error(message)
   }
+}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-white flex">
