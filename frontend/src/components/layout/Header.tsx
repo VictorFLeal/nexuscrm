@@ -44,7 +44,9 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </button>
 
       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xs font-bold">
-        {user?.name?.charAt(0).toUpperCase()}
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-xs font-bold">
+          {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+        </div>
       </div>
     </header>
   )
