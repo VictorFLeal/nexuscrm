@@ -30,9 +30,7 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
 
-        return ResponseEntity.ok(
-                ApiResponse.success(authService.login(request, httpRequest))
-        );
+        return ResponseEntity.ok(ApiResponse.success(authService.login(request, httpRequest)));
     }
 
     @PostMapping("/register")
