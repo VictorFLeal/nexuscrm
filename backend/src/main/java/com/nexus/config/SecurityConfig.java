@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,7 +30,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -42,9 +42,6 @@ public class SecurityConfig {
     private final RateLimitFilter rateLimitFilter;
     private final SecurityHeadersFilter securityHeadersFilter;
     private final UserRepository userRepository;
-
-    @Value("${cors.allowed-origins}")
-    private String allowedOrigins;
 
     public SecurityConfig(
             @Lazy JwtAuthenticationFilter jwtAuthFilter,
@@ -64,16 +61,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/auth/login", "/auth/register", "/auth/refresh",
-                                "/actuator/health", "/actuator/info"
+                                "/auth/login",
+                                "/auth/register",
+                                "/auth/refresh",
+                                "/actuator/health",
+                                "/actuator/info"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(securityHeadersFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(rateLimitFilter,       UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthFilter,         UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
